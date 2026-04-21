@@ -132,7 +132,7 @@
     </div>
 
     <div id="gameWrapper">
-        <h1 id="mainLabel">Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:</h1>
+        <h1 id="mainLabel">Alivia, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:</h1>
         <div id="loaderIcon" class="loader"></div>
         <div id="initialBtnContainer"><button id="mainBtn" class="btn-target">Klik di Sini</button></div>
         <div id="buttonArea"></div>
@@ -218,11 +218,11 @@
             loader.style.display = "none";
 
             if (clickCount > 8) {
-                label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa bapa kami supaya sehat selalu<br><br><b>Ko Handy yang pimpin ya</b>";
+                label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa Bapa Kami supaya sehat selalu<br><br><b>Alivia yang pimpin ya</b>";
                 loader.style.display = "block";
                 setTimeout(showBSOD, 20000);
             } else {
-                label.innerHTML = "Yah ko Handy loyo banget dalam pencet tombol<br>ULANGI!!!";
+                label.innerHTML = "Yah Alivia loyo banget dalam pencet tombol<br>ULANGI!!!";
                 setTimeout(() => location.reload(), 3000);
             }
         }
@@ -255,7 +255,7 @@
                     repairBtn.onclick = () => {
                         bsod.style.display = "none";
                         repairBtn.remove();
-                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
+                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Alivia yang pimpin ya</b>";
                         loader.style.display = "block";
                         setTimeout(finalPhase, 20000);
                     };
