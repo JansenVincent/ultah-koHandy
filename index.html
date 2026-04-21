@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejar Aku!</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+
+        #mainLabel {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #btnRun {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            position: absolute;
+            transition: 0.1s;
+        }
+
+        #videoContainer {
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="mainLabel">Hi ko Handy, ayo tekan tombol bawah untuk hadiahnya!</h1>
+    
+    <button id="btnRun">Klik Aku!</button>
+
+    <div id="videoContainer">
+        <h2>🎉 HAPPY BIRTHDAY! 🎉</h2>
+        <iframe width="320" height="560" src="https://youtube.com/shorts/siR2GgFPE5w?si=diga1UWuM38wHUtg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const btn = document.getElementById('btnRun');
+        const label = document.getElementById('mainLabel');
+        const videoSection = document.getElementById('videoContainer');
+        let canBeClicked = false;
+
+        // 1. Logika Tombol Lari
+        btn.addEventListener('mouseover', () => {
+            if (!canBeClicked) {
+                const x = Math.random() * (window.innerWidth - btn.clientWidth);
+                const y = Math.random() * (window.innerHeight - btn.clientHeight);
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+            }
+        });
+
+        // 2. Timer 30 Detik
+        setTimeout(() => {
+            label.innerHTML = "Capek ngejar tombolnya? <br><br> Doa Bapa Kami dulu sampai selesai ya, baru tombolnya bisa diam!";
+            
+            // 3. Logika "Selesai Doa" (Simulasi waktu doa sekitar 20-30 detik lagi)
+            setTimeout(() => {
+                canBeClicked = true;
+                btn.style.position = "static"; // Tombol balik ke tengah
+                btn.style.marginTop = "20px";
+                btn.innerHTML = "Sekarang Baru Bisa Diklik!";
+                btn.style.backgroundColor = "#2ed573";
+            }, 25000); // 25 detik untuk waktu berdoa
+
+        }, 30000); // Muncul pesan capek setelah 30 detik
+
+        // 4. Klik Tombol Setelah Doa
+        btn.addEventListener('click', () => {
+            if (canBeClicked) {
+                label.classList.add('hidden');
+                btn.classList.add('hidden');
+                videoSection.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
