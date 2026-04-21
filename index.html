@@ -6,36 +6,51 @@
     <title>Kejar Aku!</title>
     <style>
         body {
+            margin: 0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
+            align-items: center; /* Mengetengahkan secara horizontal */
+            justify-content: center; /* Mengetengahkan secara vertikal */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fce4ec; /* Warna soft pink agar lebih estetik */
+            overflow: hidden; /* Supaya tidak ada scrollbar saat tombol lari */
+        }
+
+        #container {
             text-align: center;
-            background-color: #f0f8ff;
+            padding: 20px;
+            z-index: 1; /* Supaya label tetap di bawah tombol jika perlu */
         }
 
         #mainLabel {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 22px;
+            color: #880e4f;
+            margin-bottom: 30px; /* Jarak antara label dan tombol */
+            line-height: 1.5;
         }
 
         #btnRun {
-            padding: 15px 30px;
+            padding: 15px 35px;
             font-size: 18px;
-            background-color: #ff4757;
+            font-weight: bold;
+            background-color: #ff4081;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             cursor: pointer;
-            position: absolute;
             transition: 0.1s;
+            touch-action: none; /* Mencegah layar geser di HP */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            
+            /* Penting: Defaultnya relatif terhadap container, 
+            tapi saat lari akan berubah jadi absolute via JS */
+            position: relative;
         }
 
         #videoContainer {
             display: none;
+            text-align: center;
         }
 
         .hidden {
@@ -45,62 +60,70 @@
 </head>
 <body>
 
-    <h1 id="mainLabel">Hi ko Handy, ayo tekan tombol bawah untuk hadiahnya!</h1>
-    
-    <button id="btnRun">Klik Aku!</button>
+    <div id="container">
+        <h1 id="mainLabel">Ada pesan penting buat kamu!<br>Coba klik tombol di bawah:</h1>
+        <button id="btnRun">Klik di Sini</button>
+    </div>
 
     <div id="videoContainer">
-        <h2>🎉 HAPPY BIRTHDAY! 🎉</h2>
-        <iframe width="320" height="560" src="https://youtube.com/shorts/siR2GgFPE5w?si=diga1UWuM38wHUtg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <h2 style="color: #ad1457;">🎉 HAPPY BIRTHDAY! 🎉</h2>
+        <iframe width="300" height="500" 
+            src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" 
+            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
     </div>
 
     <script>
         const btn = document.getElementById('btnRun');
         const label = document.getElementById('mainLabel');
         const videoSection = document.getElementById('videoContainer');
+        const container = document.getElementById('container');
         let canBeClicked = false;
 
-        // Logika Tombol Lari untuk HP & Desktop
         const moveButton = () => {
             if (!canBeClicked) {
-                // Hitung area aman agar tombol tidak keluar layar
-                const x = Math.random() * (window.innerWidth - btn.clientWidth);
-                const y = Math.random() * (window.innerHeight - btn.clientHeight);
+                // Ubah posisi jadi absolute agar bisa lari ke seluruh layar
+                btn.style.position = 'absolute';
                 
-                btn.style.left = x + 'px';
-                btn.style.top = y + 'px';
+                // Hitung batas layar agar tidak keluar
+                const maxX = window.innerWidth - btn.clientWidth;
+                const maxY = window.innerHeight - btn.clientHeight;
+                
+                const randomX = Math.floor(Math.random() * maxX);
+                const randomY = Math.floor(Math.random() * maxY);
+                
+                btn.style.left = randomX + 'px';
+                btn.style.top = randomY + 'px';
             }
         };
 
-        // Untuk di Laptop (Mouse mendekat langsung lari)
+        // Event lari untuk Desktop (Mouse) & HP (Sentuh)
         btn.addEventListener('mouseover', moveButton);
-
-        // Untuk di HP (Baru mau disentuh langsung lari)
         btn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Mencegah klik tidak sengaja
+            e.preventDefault();
             moveButton();
         });
 
-        // 2. Timer 30 Detik
+        // Timer 30 detik untuk muncul pesan capek
         setTimeout(() => {
-            label.innerHTML = "Capek ngejar tombolnya? <br><br> Doa Bapa Kami dulu sampai selesai ya, baru tombolnya bisa diam!";
+            label.innerHTML = "Capek ngejar tombolnya? <br><br> Doa Bapa Kami dulu ya sampe selesai, <br> baru tombolnya mau diem!";
             
-            // 3. Logika "Selesai Doa" (Simulasi waktu doa sekitar 20-30 detik lagi)
+            // Timer tambahan (misal 20 detik) untuk waktu berdoa
             setTimeout(() => {
                 canBeClicked = true;
-                btn.style.position = "static"; // Tombol balik ke tengah
-                btn.style.marginTop = "20px";
-                btn.innerHTML = "Sekarang Baru Bisa Diklik!";
-                btn.style.backgroundColor = "#2ed573";
-            }, 25000); // 25 detik untuk waktu berdoa
+                btn.style.position = 'relative'; // Balik ke posisi semula (di bawah label)
+                btn.style.left = '0';
+                btn.style.top = '0';
+                btn.style.margin = '20px auto';
+                btn.innerHTML = "Sekarang Klik Aku!";
+                btn.style.backgroundColor = "#4caf50";
+            }, 20000); 
 
-        }, 30000); // Muncul pesan capek setelah 30 detik
+        }, 30000);
 
-        // 4. Klik Tombol Setelah Doa
         btn.addEventListener('click', () => {
             if (canBeClicked) {
-                label.classList.add('hidden');
-                btn.classList.add('hidden');
+                container.style.display = 'none';
                 videoSection.style.display = 'block';
             }
         });
