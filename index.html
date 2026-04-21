@@ -52,9 +52,10 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             z-index: 500;
+            pointer-events: none; /* Supaya tidak menghalangi klik container lain */
         }
 
         .btn-target {
@@ -67,25 +68,27 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             touch-action: none;
+            pointer-events: auto; /* Tombol harus bisa diklik */
         }
 
         /* TAMPILAN BLUE SCREEN (BSOD) */
         #bsodOverlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0078d7; /* Biru Windows */
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #0078d7;  /* Biru Windows */
             color: white;
             z-index: 9999;
             display: none;
             text-align: left;
-            padding: 10% 10% 5% 10%;
+            padding: 15% 10% 5% 10%;
             font-family: 'Segoe UI', Arial;
             user-select: none;
         }
 
-        #bsodOverlay .smiley { font-size: 80px; margin-bottom: 20px; }
-        #bsodOverlay .main-text { font-size: 22px; line-height: 1.4; margin-bottom: 20px; }
-        #bsodOverlay .small-text { font-size: 14px; line-height: 1.6; opacity: 0.9; }
+        #bsodOverlay .smiley { font-size: 70px; margin-bottom: 15px; }
+        #bsodOverlay .main-text { font-size: 20px; line-height: 1.4; margin-bottom: 25px; }
+        #bsodOverlay .progress-text { font-size: 18px; margin-bottom: 30px; font-weight: 300; }
+        #bsodOverlay .small-text { font-size: 13px; line-height: 1.6; opacity: 0.8; }
 
         .loader {
             border: 4px solid #f3f3f3;
@@ -121,10 +124,9 @@
         <div class="main-text">
             Your device ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.
         </div>
+        <div id="bsodProgress" class="progress-text">0% complete</div>
         <div class="small-text">
-            0% complete<br><br>
             For more information about this issue and possible fixes, visit https://www.windows.com/stopcode<br><br>
-            If you call a support person, give them this info:<br>
             Stop code: CRITICAL_PROCESS_DIED
         </div>
     </div>
@@ -147,6 +149,7 @@
         const buttonArea = document.getElementById('buttonArea');
         const loader = document.getElementById('loaderIcon');
         const bsod = document.getElementById('bsodOverlay');
+        const bsodProgress = document.getElementById('bsodProgress');
         const videoContainer = document.getElementById('videoContainer');
         const wrapper = document.getElementById('gameWrapper');
 
@@ -155,13 +158,19 @@
         let timerSeconds = 0;
         let gameActive = true;
 
+        // 1. Fungsi sebar tombol merata ke semua sudut
         function moveElement(el) {
             el.style.position = 'absolute';
-            const padding = 60;
-            const maxX = window.innerWidth - el.clientWidth - padding;
-            const maxY = window.innerHeight - el.clientHeight - padding;
-            el.style.left = Math.max(padding, Math.floor(Math.random() * maxX)) + 'px';
-            el.style.top = Math.max(padding, Math.floor(Math.random() * maxY)) + 'px';
+            // Padding agar tombol tidak benar-benar keluar layar atau terpotong notch/bazel
+            const p = 60; 
+            const maxX = window.innerWidth - el.offsetWidth - (p/2);
+            const maxY = window.innerHeight - el.offsetHeight - (p/2);
+            
+            const randomX = Math.floor(Math.random() * (maxX - p/2)) + (p/2);
+            const randomY = Math.floor(Math.random() * (maxY - p/2)) + (p/2);
+            
+            el.style.left = randomX + 'px';
+            el.style.top = randomY + 'px';
         }
 
         function createClones() {
@@ -199,9 +208,6 @@
             }, 1000);
         }
 
-        mainBtn.addEventListener('click', handleBtnClick);
-        mainBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
-
         function finishPhase1() {
             gameActive = false;
             buttonArea.innerHTML = ""; 
@@ -218,31 +224,40 @@
             }
         }
 
+        // 2. Fungsi Blue Screen dengan Progress 0-100%
         function showBSOD() {
             loader.style.display = "none";
             bsod.style.display = "block"; // Tampilkan Blue Screen
             label.innerHTML = "";
             
-            // Tunggu 5 detik di layar biru biar panik, baru muncul tombol Perbaiki
-            setTimeout(() => {
-                const repairBtn = document.createElement('button');
-                repairBtn.className = "btn-target";
-                repairBtn.innerText = "Perbaiki Sistem";
-                repairBtn.style.position = "fixed";
-                repairBtn.style.bottom = "10%";
-                repairBtn.style.left = "50%";
-                repairBtn.style.transform = "translateX(-50%)";
-                repairBtn.style.zIndex = "10001";
-                document.body.appendChild(repairBtn);
+            let percent = 0;
+            const progressInterval = setInterval(() => {
+                percent += 1;
+                bsodProgress.innerText = `${percent}% complete`;
+                
+                if (percent >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // Setelah 100%, munculkan tombol Perbaiki Sistem
+                    const repairBtn = document.createElement('button');
+                    repairBtn.className = "btn-target";
+                    repairBtn.innerText = "Perbaiki Sistem";
+                    repairBtn.style.position = "fixed";
+                    repairBtn.style.bottom = "15%";
+                    repairBtn.style.left = "50%";
+                    repairBtn.style.transform = "translateX(-50%)";
+                    repairBtn.style.zIndex = "10001";
+                    document.body.appendChild(repairBtn);
 
-                repairBtn.onclick = () => {
-                    bsod.style.display = "none";
-                    repairBtn.remove();
-                    label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
-                    loader.style.display = "block";
-                    setTimeout(finalPhase, 20000);
-                };
-            }, 5000);
+                    repairBtn.onclick = () => {
+                        bsod.style.display = "none";
+                        repairBtn.remove();
+                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
+                        loader.style.display = "block";
+                        setTimeout(finalPhase, 20000);
+                    };
+                }
+            }, 50); // 50ms * 100 = 5000ms (5 detik)
         }
 
         function finalPhase() {
