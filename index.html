@@ -208,6 +208,9 @@
             }, 1000);
         }
 
+        mainBtn.addEventListener('click', handleBtnClick);
+        mainBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
+
         function finishPhase1() {
             gameActive = false;
             buttonArea.innerHTML = ""; 
