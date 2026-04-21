@@ -5,85 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hadiah Buat Ko Handy❤️❤️❤️</title>
     <style>
+        /* CSS RESET & FIX CENTERING */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            margin: 0;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Jaga konten tetap di tengah horizontal */
+            justify-content: center; /* Jaga konten tetap di tengah vertikal */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            overflow: hidden; /* Mencegah layar goyang di HP */
+            color: #333;
+            text-align: center;
+        }
+
+        /* 1. KONTEN SELALU DI TENGAH LAYAR HP */
+        #gameWrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f0f2f5;
-            overflow: hidden;
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            position: relative;
         }
 
-        #container { padding: 20px; width: 100%; z-index: 10; }
-        #mainLabel { font-size: 20px; font-weight: bold; margin-bottom: 20px; transition: 0.3s; }
-        
+        /* 2. LABEL TETAP DI DEPAN (Fix Poin 2) */
+        #mainLabel {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            z-index: 1000; /* Angka tinggi agar tidak tertimpa tombol */
+            pointer-events: none; /* User tidak sengaja klik text */
+            transition: color 0.2s;
+        }
+
+        /* AREA UNTUK TOMBOL-TOMBOL LARIAN */
+        #buttonArea {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50; /* Di bawah label */
+        }
+
         .btn-target {
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            position: relative;
+            position: absolute; /* Default absolute agar bisa lari */
             touch-action: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translate(-50%, -50%); /* Sentris posisi saat lari */
+            transition: background 0.2s;
         }
 
-        /* Layar Retak */
-        .crack-screen {
+        /* 3. LAYAR RETAK (Fix Poin 3) */
+        #crackOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://p7.hiclipart.com/preview/554/770/118/glass-crack-desktop-wallpaper-screen-shatter.jpg');
             background-size: cover;
-            z-index: 99;
+            background-position: center;
+            z-index: 9999; /* Paling atas */
             display: none;
             pointer-events: none;
         }
 
-        /* Loading Spinner */
+        /* TOMBOL POSISI DIAM (UNTUK READY) */
+        .static-btn {
+            position: static !important;
+            margin-top: 20px;
+            transform: none !important;
+            z-index: 1001;
+        }
+
+        /* LOADING SPINNER */
         .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 15px auto;
             display: none;
+            z-index: 1001;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-        
+
+        /* 4. VIDEO PENUH KIRI KANAN (Fix Poin 4 seperti Gambar 1) */
+        #videoContainer {
+            width: 100vw; /* Penuh lebar viewport */
+            height: 100vh; /* Penuh tinggi viewport */
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 10000;
+            background-color: black; /* Latar video hitam */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #videoContainer h2 { color: white; margin-bottom: 10px; font-size: 20px; }
+
         #videoContainer iframe {
-            width: 100%;
-            max-width: 400px;
-            height: 600px;
+            width: 100% !important; /* Penuh lebar HP */
+            height: 100% !important; /* Penuh tinggi HP (Drive akan nyesuaiin) */
+            border: none;
         }
     </style>
 </head>
 <body>
 
-    <div id="crackOverlay" class="crack-screen"></div>
+    <div id="crackOverlay"></div>
 
-    <div id="uiLayer">
-        <div id="container">
-            <h1 id="mainLabel">Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:</h1>
-            <div id="buttonArea">
-                <button id="mainBtn" class="btn-target">Klik di Sini</button>
-            </div>
-            <div id="loaderIcon" class="loader"></div>
+    <div id="gameWrapper">
+        <h1 id="mainLabel">Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:</h1>
+        
+        <div id="loaderIcon" class="loader"></div>
+        
+        <div id="buttonArea">
+            <button id="mainBtn" class="btn-target" style="top: 50%; left: 50%;">Klik di Sini</button>
         </div>
+    </div>
 
-        <div id="videoContainer" class="hidden">
-            <h2 id="lastMsg">🎁 KEJUTAAAN! 🎁</h2>
-            <iframe src="https://drive.google.com/file/d/1Z49LW8gbR6HNCcwwNbBTJIuEu5m4Tkxl/preview" allow="autoplay"></iframe>
-        </div>
+    <div id="videoContainer">
+        <h2>🎁 KEJUTAAAN! 🎁</h2>
+        <iframe src="https://drive.google.com/file/d/1Z49LW8gbR6HNCcwwNbBTJIuEu5m4Tkxl/preview" allow="autoplay" allowfullscreen></iframe>
     </div>
 
     <script>
@@ -93,26 +151,36 @@
         const loader = document.getElementById('loaderIcon');
         const crackOverlay = document.getElementById('crackOverlay');
         const videoContainer = document.getElementById('videoContainer');
+        const wrapper = document.getElementById('gameWrapper');
 
         let clickCount = 0;
         let isStarted = false;
         let timerSeconds = 0;
         let gameActive = true;
 
-        const originalText = "Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:";
-
-        function moveElement(el) {
-            const maxX = window.innerWidth - el.clientWidth;
-            const maxY = window.innerHeight - el.clientHeight;
-            el.style.position = 'absolute';
-            el.style.left = Math.random() * maxX + 'px';
-            el.style.top = Math.random() * maxY + 'px';
+        // Mendapatkan batas area wrapper yang aman
+        function getSafeBounds() {
+            const wrapRect = wrapper.getBoundingClientRect();
+            return {
+                maxX: wrapRect.width,
+                maxY: wrapRect.height
+            };
         }
 
+        // Memindahkan elemen ke posisi acak di dalam wrapper
+        function moveElement(el) {
+            const bounds = getSafeBounds();
+            // Jarak aman 40px dari pinggir
+            const padding = 40;
+            el.style.left = padding + Math.random() * (bounds.maxX - padding*2) + 'px';
+            el.style.top = padding + Math.random() * (bounds.maxY - padding*2) + 'px';
+        }
+
+        // Membuat tombol kloning
         function createClones() {
             for (let i = 0; i < 2; i++) {
                 const newBtn = mainBtn.cloneNode(true);
-                newBtn.id = ""; 
+                newBtn.id = ""; // Hapus ID agar tidak duplikat
                 newBtn.addEventListener('click', handleBtnClick);
                 newBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
                 buttonArea.appendChild(newBtn);
@@ -139,7 +207,7 @@
             }, 1000);
         }
 
-        function handleBtnClick() {
+        function handleBtnClick(e) {
             if (!gameActive) return;
             
             if (!isStarted) {
@@ -148,6 +216,7 @@
             }
 
             clickCount++;
+            
             // Semua tombol bergerak
             const allBtns = document.querySelectorAll('.btn-target');
             allBtns.forEach(btn => moveElement(btn));
@@ -156,12 +225,13 @@
             createClones();
         }
 
+        // Pancing event click pertama
         mainBtn.addEventListener('click', handleBtnClick);
         mainBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
 
         function finishPhase1() {
             gameActive = false;
-            buttonArea.innerHTML = ""; // Bersihkan tombol
+            buttonArea.innerHTML = ""; // Bersihkan semua tombol larian
             loader.style.display = "none";
 
             if (clickCount > 8) {
@@ -176,7 +246,7 @@
                 // Skenario 5b: Loyo
                 label.innerHTML = "Yah ko Handy loyo banget dalam pencet tombol<br>ULANGI!!!";
                 setTimeout(() => {
-                    location.reload(); // Restart ke kondisi awal
+                    location.reload(); 
                 }, 3000);
             }
         }
@@ -187,10 +257,9 @@
             
             label.innerHTML = "";
             const repairBtn = document.createElement('button');
-            repairBtn.className = "btn-target";
+            repairBtn.className = "btn-target static-btn"; // Pakai class static agar diam
             repairBtn.innerText = "Perbaiki";
-            repairBtn.style.position = "static";
-            buttonArea.appendChild(repairBtn);
+            wrapper.appendChild(repairBtn); // Ditaruh langsung di wrapper agar tengah
 
             repairBtn.onclick = () => {
                 crackOverlay.style.display = "none";
@@ -209,15 +278,13 @@
             label.innerHTML = "Sudah siap?<br>Naikkan volume hp dulu ko";
             
             const readyBtn = document.createElement('button');
-            readyBtn.className = "btn-target";
+            readyBtn.className = "btn-target static-btn";
             readyBtn.innerText = "Readyyyy";
-            readyBtn.style.position = "static";
-            buttonArea.appendChild(readyBtn);
+            wrapper.appendChild(readyBtn);
 
             readyBtn.onclick = () => {
-                label.classList.add('hidden');
-                readyBtn.classList.add('hidden');
-                videoContainer.classList.remove('hidden');
+                wrapper.classList.add('hidden'); // Sembunyikan semua konten game
+                videoContainer.style.display = 'flex'; // Tampilkan video fullscreen
             };
         }
     </script>
