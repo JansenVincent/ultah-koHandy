@@ -20,7 +20,7 @@
             text-align: center;
         }
 
-        /* Container utama agar konten di tengah */
+        /* Container utama */
         #gameWrapper {
             position: relative;
             width: 100%;
@@ -32,24 +32,29 @@
             padding: 20px;
         }
 
-        /* Label Teks - Z-index tinggi agar selalu di depan tombol */
         #mainLabel {
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 20px;
-            z-index: 999; 
-            pointer-events: none; /* Supaya teks tidak menghalangi klik ke tombol di bawahnya */
+            margin-bottom: 25px; /* Memberi jarak ke tombol di bawahnya */
+            z-index: 1000; 
+            pointer-events: none;
             position: relative;
         }
 
-        /* Area tombol larian */
+        /* Container tombol agar tidak lari ke atas di awal */
+        #initialBtnContainer {
+            z-index: 1001;
+            position: relative;
+        }
+
+        /* Area larian tombol (hanya aktif setelah klik pertama) */
         #buttonArea {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 10;
+            z-index: 500;
         }
 
         .btn-target {
@@ -65,13 +70,7 @@
             white-space: nowrap;
         }
 
-        /* Tombol awal di bawah label */
-        #mainBtn {
-            position: relative; 
-            z-index: 1000;
-        }
-
-        /* Efek Layar Retak - Menggunakan Link Alternatif yang Lebih Stabil */
+        /* Gambar Retak */
         #crackOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -106,7 +105,6 @@
             display: none;
             flex-direction: column;
         }
-
         #videoContainer iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
@@ -119,9 +117,11 @@
         
         <div id="loaderIcon" class="loader"></div>
 
-        <div id="buttonArea">
+        <div id="initialBtnContainer">
             <button id="mainBtn" class="btn-target">Klik di Sini</button>
         </div>
+
+        <div id="buttonArea"></div>
     </div>
 
     <div id="videoContainer">
@@ -131,6 +131,7 @@
     <script>
         const label = document.getElementById('mainLabel');
         const mainBtn = document.getElementById('mainBtn');
+        const initialContainer = document.getElementById('initialBtnContainer');
         const buttonArea = document.getElementById('buttonArea');
         const loader = document.getElementById('loaderIcon');
         const crackOverlay = document.getElementById('crackOverlay');
@@ -143,9 +144,8 @@
         let gameActive = true;
 
         function moveElement(el) {
-            // Ubah ke absolute hanya saat tombol mulai lari
             el.style.position = 'absolute';
-            const padding = 50;
+            const padding = 60;
             const maxX = window.innerWidth - el.clientWidth - padding;
             const maxY = window.innerHeight - el.clientHeight - padding;
             
@@ -184,13 +184,17 @@
 
         function handleBtnClick() {
             if (!gameActive) return;
+
             if (!isStarted) {
                 isStarted = true;
+                // Masukkan tombol utama ke area larian setelah diklik pertama kali
+                buttonArea.appendChild(mainBtn);
                 startTimer();
             }
+            
             clickCount++;
             
-            // Gerakkan semua tombol yang ada
+            // Gerakkan semua tombol
             const allBtns = document.querySelectorAll('.btn-target');
             allBtns.forEach(btn => moveElement(btn));
             createClones();
@@ -202,6 +206,7 @@
         function finishPhase1() {
             gameActive = false;
             buttonArea.innerHTML = ""; 
+            initialContainer.innerHTML = "";
             loader.style.display = "none";
 
             if (clickCount > 8) {
@@ -222,9 +227,8 @@
             const repairBtn = document.createElement('button');
             repairBtn.className = "btn-target";
             repairBtn.innerText = "Perbaiki";
-            repairBtn.style.position = "relative";
             repairBtn.style.zIndex = "10000";
-            wrapper.appendChild(repairBtn);
+            initialContainer.appendChild(repairBtn);
 
             repairBtn.onclick = () => {
                 crackOverlay.style.display = "none";
@@ -241,9 +245,8 @@
             const readyBtn = document.createElement('button');
             readyBtn.className = "btn-target";
             readyBtn.innerText = "Readyyyy";
-            readyBtn.style.position = "relative";
             readyBtn.style.zIndex = "10000";
-            wrapper.appendChild(readyBtn);
+            initialContainer.appendChild(readyBtn);
 
             readyBtn.onclick = () => {
                 wrapper.style.display = 'none';
