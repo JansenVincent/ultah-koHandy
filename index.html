@@ -2,135 +2,224 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kejar Aku!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hadiah Buat Ko Handy❤️❤️❤️</title>
     <style>
         body {
             margin: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Mengetengahkan secara horizontal */
-            justify-content: center; /* Mengetengahkan secara vertikal */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fce4ec; /* Warna soft pink agar lebih estetik */
-            overflow: hidden; /* Supaya tidak ada scrollbar saat tombol lari */
-        }
-
-        #container {
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f5;
+            overflow: hidden;
             text-align: center;
-            padding: 20px;
-            z-index: 1; /* Supaya label tetap di bawah tombol jika perlu */
         }
 
-        #mainLabel {
-            font-size: 22px;
-            color: #880e4f;
-            margin-bottom: 30px; /* Jarak antara label dan tombol */
-            line-height: 1.5;
-        }
-
-        #btnRun {
-            padding: 15px 35px;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #ff4081;
+        #container { padding: 20px; width: 100%; z-index: 10; }
+        #mainLabel { font-size: 20px; font-weight: bold; margin-bottom: 20px; transition: 0.3s; }
+        
+        .btn-target {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 50px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: 0.1s;
-            touch-action: none; /* Mencegah layar geser di HP */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            
-            /* Penting: Defaultnya relatif terhadap container, 
-            tapi saat lari akan berubah jadi absolute via JS */
             position: relative;
+            touch-action: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        #videoContainer {
+        /* Layar Retak */
+        .crack-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://p7.hiclipart.com/preview/554/770/118/glass-crack-desktop-wallpaper-screen-shatter.jpg');
+            background-size: cover;
+            z-index: 99;
             display: none;
-            text-align: center;
+            pointer-events: none;
         }
 
-        .hidden {
+        /* Loading Spinner */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
             display: none;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        
+        #videoContainer iframe {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
         }
     </style>
 </head>
 <body>
 
-    <div id="container">
-        <h1 id="mainLabel">Ko Handy, ada pesan penting buat kamu!<br>Cepat klik tombol di bawah:</h1>
-        <button id="btnRun">Klik di Sini</button>
-    </div>
+    <div id="crackOverlay" class="crack-screen"></div>
 
-    <div id="videoContainer">
-        <h2 style="color: #ad1457;">🎉 HAPPY BIRTHDAY! 🎉</h2>
-        <iframe 
-            width="315" 
-            height="560" 
-            src="https://www.youtube.com/embed/Ewnf9RN3uzw?autoplay=1" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-        </iframe>
+    <div id="uiLayer">
+        <div id="container">
+            <h1 id="mainLabel">Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:</h1>
+            <div id="buttonArea">
+                <button id="mainBtn" class="btn-target">Klik di Sini</button>
+            </div>
+            <div id="loaderIcon" class="loader"></div>
+        </div>
+
+        <div id="videoContainer" class="hidden">
+            <h2 id="lastMsg">🎁 KEJUTAAAN! 🎁</h2>
+            <iframe src="https://drive.google.com/file/d/1Z49LW8gbR6HNCcwwNbBTJIuEu5m4Tkxl/preview" allow="autoplay"></iframe>
+        </div>
     </div>
 
     <script>
-        const btn = document.getElementById('btnRun');
         const label = document.getElementById('mainLabel');
-        const videoSection = document.getElementById('videoContainer');
-        const container = document.getElementById('container');
-        let canBeClicked = false;
+        const mainBtn = document.getElementById('mainBtn');
+        const buttonArea = document.getElementById('buttonArea');
+        const loader = document.getElementById('loaderIcon');
+        const crackOverlay = document.getElementById('crackOverlay');
+        const videoContainer = document.getElementById('videoContainer');
 
-        const moveButton = () => {
-            if (!canBeClicked) {
-                // Ubah posisi jadi absolute agar bisa lari ke seluruh layar
-                btn.style.position = 'absolute';
-                
-                // Hitung batas layar agar tidak keluar
-                const maxX = window.innerWidth - btn.clientWidth;
-                const maxY = window.innerHeight - btn.clientHeight;
-                
-                const randomX = Math.floor(Math.random() * maxX);
-                const randomY = Math.floor(Math.random() * maxY);
-                
-                btn.style.left = randomX + 'px';
-                btn.style.top = randomY + 'px';
+        let clickCount = 0;
+        let isStarted = false;
+        let timerSeconds = 0;
+        let gameActive = true;
+
+        const originalText = "Ko Handy, ada hadiah buat kamuuuu!<br>Cepat klik tombol di bawah:";
+
+        function moveElement(el) {
+            const maxX = window.innerWidth - el.clientWidth;
+            const maxY = window.innerHeight - el.clientHeight;
+            el.style.position = 'absolute';
+            el.style.left = Math.random() * maxX + 'px';
+            el.style.top = Math.random() * maxY + 'px';
+        }
+
+        function createClones() {
+            for (let i = 0; i < 2; i++) {
+                const newBtn = mainBtn.cloneNode(true);
+                newBtn.id = ""; 
+                newBtn.addEventListener('click', handleBtnClick);
+                newBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
+                buttonArea.appendChild(newBtn);
+                moveElement(newBtn);
             }
-        };
+        }
 
-        // Event lari untuk Desktop (Mouse) & HP (Sentuh)
-        btn.addEventListener('mouseover', moveButton);
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveButton();
-        });
+        function startTimer() {
+            const interval = setInterval(() => {
+                timerSeconds++;
+                
+                // Perubahan Label setiap 5 detik
+                if (timerSeconds === 5) label.innerHTML = "Ayooo cepat klik buttonnya! Nanti hadiahnya batal!";
+                if (timerSeconds === 10) label.innerHTML = "Kalau males klik.... <br>Males deh kasih hadiahnya";
+                if (timerSeconds === 15) {
+                    label.innerHTML = "Loading...";
+                    loader.style.display = "block";
+                }
 
-        // Timer 30 detik untuk muncul pesan capek
-        setTimeout(() => {
-            label.innerHTML = "Capek ngejar tombolnya? <br><br> Doa Bapa Kami dulu ya sampe selesai, <br> baru tombolnya mau diem!";
+                if (timerSeconds >= 20) {
+                    clearInterval(interval);
+                    finishPhase1();
+                }
+            }, 1000);
+        }
+
+        function handleBtnClick() {
+            if (!gameActive) return;
             
-            // Timer tambahan (misal 20 detik) untuk waktu berdoa
-            setTimeout(() => {
-                canBeClicked = true;
-                btn.style.position = 'relative'; // Balik ke posisi semula (di bawah label)
-                btn.style.left = '0';
-                btn.style.top = '0';
-                btn.style.margin = '20px auto';
-                btn.innerHTML = "Sekarang Klik Aku!";
-                btn.style.backgroundColor = "#4caf50";
-            }, 20000); 
-
-        }, 20000);
-
-        btn.addEventListener('click', () => {
-            if (canBeClicked) {
-                container.style.display = 'none';
-                videoSection.style.display = 'block';
+            if (!isStarted) {
+                isStarted = true;
+                startTimer();
             }
-        });
+
+            clickCount++;
+            // Semua tombol bergerak
+            const allBtns = document.querySelectorAll('.btn-target');
+            allBtns.forEach(btn => moveElement(btn));
+            
+            // Gandakan tombol
+            createClones();
+        }
+
+        mainBtn.addEventListener('click', handleBtnClick);
+        mainBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleBtnClick(); });
+
+        function finishPhase1() {
+            gameActive = false;
+            buttonArea.innerHTML = ""; // Bersihkan tombol
+            loader.style.display = "none";
+
+            if (clickCount > 8) {
+                // Skenario 5a: Virus
+                label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa bapa kami supaya sehat selalu<br><br><b>Ko Handy yang pimpin ya</b>";
+                loader.style.display = "block";
+                
+                setTimeout(() => {
+                    showCrackPrank();
+                }, 20000); // Loading 20 detik
+            } else {
+                // Skenario 5b: Loyo
+                label.innerHTML = "Yah ko Handy loyo banget dalam pencet tombol<br>ULANGI!!!";
+                setTimeout(() => {
+                    location.reload(); // Restart ke kondisi awal
+                }, 3000);
+            }
+        }
+
+        function showCrackPrank() {
+            loader.style.display = "none";
+            crackOverlay.style.display = "block"; // Layar Retak muncul
+            
+            label.innerHTML = "";
+            const repairBtn = document.createElement('button');
+            repairBtn.className = "btn-target";
+            repairBtn.innerText = "Perbaiki";
+            repairBtn.style.position = "static";
+            buttonArea.appendChild(repairBtn);
+
+            repairBtn.onclick = () => {
+                crackOverlay.style.display = "none";
+                repairBtn.remove();
+                label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
+                loader.style.display = "block";
+
+                setTimeout(() => {
+                    finalPhase();
+                }, 20000); // Loading 20 detik
+            };
+        }
+
+        function finalPhase() {
+            loader.style.display = "none";
+            label.innerHTML = "Sudah siap?<br>Naikkan volume hp dulu ko";
+            
+            const readyBtn = document.createElement('button');
+            readyBtn.className = "btn-target";
+            readyBtn.innerText = "Readyyyy";
+            readyBtn.style.position = "static";
+            buttonArea.appendChild(readyBtn);
+
+            readyBtn.onclick = () => {
+                label.classList.add('hidden');
+                readyBtn.classList.add('hidden');
+                videoContainer.classList.remove('hidden');
+            };
+        }
     </script>
 </body>
 </html>
