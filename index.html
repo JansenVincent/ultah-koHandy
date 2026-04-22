@@ -143,6 +143,10 @@
     </div>
 
     <script>
+        // --- GLOBAL VARIABLE ---
+        const targetName = "Ko Handy";
+        // -----------------------
+
         const label = document.getElementById('mainLabel');
         const mainBtn = document.getElementById('mainBtn');
         const initialContainer = document.getElementById('initialBtnContainer');
@@ -218,11 +222,11 @@
             loader.style.display = "none";
 
             if (clickCount > 8) {
-                label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa Bapa Kami supaya sehat selalu<br><br><b>Ko Handy yang pimpin ya</b>";
+                label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa Bapa Kami supaya sehat selalu<br><br><b>" + targetName + " yang pimpin ya</b>";
                 loader.style.display = "block";
                 setTimeout(showBSOD, 20000);
             } else {
-                label.innerHTML = "Yah Ko Handy loyo banget dalam pencet tombol<br>ULANGI!!!";
+                label.innerHTML = "Yah " + targetName + " loyo banget dalam pencet tombol<br>ULANGI!!!";
                 setTimeout(() => location.reload(), 3000);
             }
         }
@@ -255,7 +259,7 @@
                     repairBtn.onclick = () => {
                         bsod.style.display = "none";
                         repairBtn.remove();
-                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa salam maria dan kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
+                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa Salam Maria dan Kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
                         loader.style.display = "block";
                         setTimeout(finalPhase, 20000);
                     };
