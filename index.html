@@ -221,7 +221,7 @@
             initialContainer.innerHTML = "";
             loader.style.display = "none";
 
-            if (clickCount > 8) {
+            if (clickCount > 15) {
                 label.innerHTML = "Virus terdeteksi di dalam handphone......<br>Yuk kita doa Bapa Kami supaya sehat selalu<br><br><b>" + targetName + " yang pimpin ya</b>";
                 loader.style.display = "block";
                 setTimeout(showBSOD, 20000);
@@ -259,7 +259,7 @@
                     repairBtn.onclick = () => {
                         bsod.style.display = "none";
                         repairBtn.remove();
-                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa Salam Maria dan Kemuliaan.<br><br><b>Ko Handy yang pimpin ya</b>";
+                        label.innerHTML = "Biar awet dan panjang umur...<br>Yuk kita doa Salam Maria dan Kemuliaan.<br><br><b>" + targetName + " yang pimpin ya</b>";
                         loader.style.display = "block";
                         setTimeout(finalPhase, 20000);
                     };
