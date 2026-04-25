@@ -107,14 +107,35 @@
             width: 100vw;
             height: 100vh;
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             z-index: 10000;
             background-color: black;
             display: none;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        #videoContainer iframe { width: 100%; height: 100%; border: none; }
+
+        .video-wrapper {
+            width: 100%;
+            height: 70%; /* Beri ruang untuk teks dan tombol */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-item {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-item iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
@@ -139,7 +160,19 @@
     </div>
 
     <div id="videoContainer">
-        <iframe src="https://drive.google.com/file/d/1TcJAv-q0Pkoh5wrA_SIpS517ZUmXtUJv/preview" allow="autoplay"></iframe>
+        <h2 id="lastMsg">🎁 HADIAH PERTAMA 🎁</h2>
+        
+        <div class="video-wrapper">
+            <div id="boxVideo1" class="video-item">
+                <iframe id="video1" src="https://drive.google.com/file/d/1TcJAv-q0Pkoh5wrA_SIpS517ZUmXtUJv/preview" allow="autoplay" allowfullscreen></iframe>
+            </div>
+
+            <div id="boxVideo2" class="video-item" style="display: none;">
+                <iframe id="video2" src="https://drive.google.com/file/d/1xA-zoFQaCLQyulttEtKIYdqXK3mfQ7V7/preview" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <button id="nextVideoBtn" class="btn-target" style="position: static; margin-top: 20px;">Lihat Hadiah Berikutnya 🎁</button>
     </div>
 
     <script>
@@ -156,6 +189,11 @@
         const bsodProgress = document.getElementById('bsodProgress');
         const videoContainer = document.getElementById('videoContainer');
         const wrapper = document.getElementById('gameWrapper');
+
+        const nextVideoBtn = document.getElementById('nextVideoBtn');
+        const boxVideo1 = document.getElementById('boxVideo1');
+        const boxVideo2 = document.getElementById('boxVideo2');
+        const lastMsg = document.getElementById('lastMsg');
 
         let clickCount = 0;
         let isStarted = false;
@@ -281,6 +319,22 @@
                 videoContainer.style.display = 'flex';
             };
         }
+
+        nextVideoBtn.onclick = () => {
+            // Sembunyikan video 1, tampilkan video 2
+            boxVideo1.style.display = 'none';
+            boxVideo2.style.display = 'block';
+            
+            // Ubah judul
+            lastMsg.innerHTML = "🎁 HADIAH TERAKHIR BUAT " + targetName.toUpperCase() + " 🎁";
+            
+            // Sembunyikan tombolnya sendiri agar tidak mengganggu video kedua
+            nextVideoBtn.style.display = 'none';
+            
+            // Auto-play video kedua dengan merefresh src-nya (trick agar start otomatis)
+            const video2 = document.getElementById('video2');
+            video2.src += "&autoplay=1";
+        };
     </script>
 </body>
 </html>
